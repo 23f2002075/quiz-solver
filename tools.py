@@ -21,10 +21,12 @@ def get_rendered_html(url: str) -> str:
         print(f"\n[HTML] Fetching: {url}")
         from selenium import webdriver
         from selenium.webdriver.chrome.options import Options
+        from selenium.webdriver.chrome.service import Service
         from selenium.webdriver.common.by import By
         from selenium.webdriver.support.ui import WebDriverWait
         from selenium.webdriver.support import expected_conditions as EC
         import time
+        import shutil
         
         chrome_options = Options()
         chrome_options.add_argument("--headless=new")
@@ -34,7 +36,18 @@ def get_rendered_html(url: str) -> str:
         chrome_options.add_argument("--window-size=1920,1080")
         chrome_options.add_argument("--disable-web-resources")
         
-        driver = webdriver.Chrome(options=chrome_options)
+        # Try to use chromium from system or default
+        try:
+            driver = webdriver.Chrome(options=chrome_options)
+        except:
+            # Fallback: use chromium binary if available
+            try:
+                chrome_options.binary_location = "/usr/bin/chromium"
+                driver = webdriver.Chrome(options=chrome_options)
+            except:
+                # Last resort: try with chromedriver service
+                driver = webdriver.Chrome(service=Service("/usr/bin/chromedriver"), options=chrome_options)
+        
         driver.set_page_load_timeout(15)
         driver.get(url)
         

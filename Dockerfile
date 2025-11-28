@@ -3,8 +3,9 @@ FROM python:3.12-slim
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     tesseract-ocr \
-    chromium-browser \
-    chromium-chromedriver \
+    chromium \
+    chromium-driver \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
