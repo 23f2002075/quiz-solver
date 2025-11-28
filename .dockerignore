@@ -1,0 +1,17 @@
+.git
+.gitignore
+README.md
+.env.local
+__pycache__
+*.pyc
+.pytest_cache
+.venv
+venv
+instance/
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+node_modules/

@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: quiz-solver-agent
+    env: python
+    plan: standard
+    
+    # Build configuration
+    buildCommand: |
+      pip install --upgrade pip
+      pip install -r requirements.txt
+      apt-get update && apt-get install -y tesseract-ocr chromium-browser chromium-chromedriver
+    
+    # Start command
+    startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT
+    
+    # Environment variables
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12
+      - key: PORT
+        value: 8000
+    
+    # Health check
+    healthCheckPath: /healthz
+    
+    # Auto-deploy on push
+    autoDeploy: true
+    
+    # Keep-alive (prevent free tier from sleeping)
+    autoScalingEnabled: false
+    numInstances: 1
+    
+    # Environment secrets (add these in Render dashboard)
+    # - GOOGLE_API_KEY
+    # - GOOGLE_API_KEY_2
+    # - EMAIL
+    # - SECRET
