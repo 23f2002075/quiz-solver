@@ -1,18 +1,26 @@
 FROM python:3.12-slim
 
-# Install system dependencies
+# Install system dependencies including build tools
 RUN apt-get update && apt-get install -y \
     tesseract-ocr \
     chromium \
     chromium-driver \
     curl \
+    build-essential \
+    cmake \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
+# Upgrade pip and setuptools
+RUN pip install --upgrade pip setuptools wheel
+
 # Copy requirements first (for better caching)
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+
+# Install Python dependencies with pre-built wheels
+RUN pip install --no-cache-dir --prefer-binary -r requirements.txt
 
 # Copy application code (NOT .env - it's in .gitignore)
 COPY app.py agent.py tools.py ./

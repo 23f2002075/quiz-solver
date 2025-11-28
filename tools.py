@@ -401,18 +401,37 @@ def extract_parquet_data(filepath: str) -> str:
     """Extract and analyze parquet file with detailed statistics.
     
     Returns: Schema, shape, dtypes, and first rows.
+    Handles missing parquet libraries gracefully.
     """
     try:
         print(f"\n[PARQUET] Reading: {filepath}")
         
+        df = None
         try:
             import pyarrow.parquet as pq
             table = pq.read_table(filepath)
             df = table.to_pandas()
         except ImportError:
-            import fastparquet
-            pf = fastparquet.ParquetFile(filepath)
-            df = pf.to_pandas()
+            try:
+                import fastparquet
+                pf = fastparquet.ParquetFile(filepath)
+                df = pf.to_pandas()
+            except ImportError:
+                # Fallback: use pandas read_parquet if available
+                try:
+                    import pandas as pd
+                    df = pd.read_parquet(filepath)
+                except Exception as pandas_error:
+                    return json.dumps({
+                        "status": "error",
+                        "message": "No parquet library available. Install pyarrow or fastparquet."
+                    })
+        
+        if df is None:
+            return json.dumps({
+                "status": "error",
+                "message": "Could not read parquet file"
+            })
         
         # Build comprehensive analysis
         analysis = {
