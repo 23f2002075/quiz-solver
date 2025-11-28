@@ -13,8 +13,8 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
-COPY app.py agent.py tools.py .env ./
+# Copy application code (NOT .env - it's in .gitignore)
+COPY app.py agent.py tools.py ./
 
 # Expose port
 EXPOSE 8000
@@ -24,4 +24,5 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8000/healthz || exit 1
 
 # Run application
+# Environment variables must be set at runtime via Render dashboard
 CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
