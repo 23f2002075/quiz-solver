@@ -1,9 +1,9 @@
 fastapi==0.104.1
 uvicorn==0.24.0
 python-dotenv==1.0.0
-langchain==0.1.0
-langchain-google-genai==0.0.8
-langgraph==0.0.20
+langchain==0.1.14
+langchain-google-genai==0.1.0
+langgraph==0.1.0
 selenium==4.15.2
 beautifulsoup4==4.12.2
 requests==2.31.0
