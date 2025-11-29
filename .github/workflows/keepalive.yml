@@ -1,0 +1,16 @@
+name: Keep Render Service Alive
+
+on:
+  schedule:
+    # Run every 10 minutes
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Render service
+        run: |
+          curl -f https://quiz-solver-agent.onrender.com/healthz || exit 1
+        continue-on-error: true
